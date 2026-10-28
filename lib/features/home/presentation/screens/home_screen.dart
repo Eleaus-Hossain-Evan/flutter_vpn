@@ -3,13 +3,14 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../gen/assets.gen.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_bottom_nav.dart';
 import '../../../../core/widgets/app_icon.dart';
 import '../../../../core/widgets/brand_logo.dart';
+import '../../../../core/widgets/slide_fade_switcher.dart';
+import '../../../../gen/assets.gen.dart';
 import '../widgets/connection_metrics_card.dart';
 import '../widgets/power_button.dart';
 import '../widgets/selected_server_card.dart';
@@ -116,9 +117,14 @@ class _Dashboard extends StatelessWidget {
   final VoidCallback onDisconnect;
 
   /// Figma entrance fade: hold, then 450 ms ease-out to opaque.
-  Widget _fadeIn(Widget child, int delayMs) => child
-      .animate(key: ValueKey((delayMs, connected)))
-      .fadeIn(delay: delayMs.ms, duration: 450.ms, curve: Curves.easeOut);
+  ///
+  /// Unkeyed on purpose: it plays once when Home mounts and never on a
+  /// connect/disconnect rebuild. State swaps animate inside the child.
+  Widget _fadeIn(Widget child, int delayMs) => child.animate().fadeIn(
+    delay: delayMs.ms,
+    duration: 450.ms,
+    curve: Curves.easeOut,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +169,13 @@ class _Dashboard extends StatelessWidget {
         gap,
         SizedBox(
           height: 50.h,
-          child: connected ? _DisconnectButton(onPressed: onDisconnect) : null,
+          child: SlideFadeSwitcher(
+            offsetY: 0.4,
+            expand: true,
+            child: connected
+                ? _DisconnectButton(onPressed: onDisconnect)
+                : const SizedBox.shrink(),
+          ),
         ),
       ],
     );
@@ -179,27 +191,42 @@ class _StatusText extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = connected ? AppColors.success : AppColors.textSecondary;
 
-    return Column(
-      children: [
-        Text(
-          connected ? 'Connected' : 'Not Connected',
-          style: AppTextStyles.headline,
-        ),
-        SizedBox(height: AppSpacing.sm.h),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (connected) ...[
-              AppIcon(Assets.svg.shieldCheck, size: 15, color: color),
-              SizedBox(width: 5.w),
+    // Crossfade only — no slide for the status text.
+    return SlideFadeSwitcher(
+      offsetY: 0,
+      alignment: Alignment.topCenter,
+      child: Column(
+        key: ValueKey(connected),
+        children: [
+          Text(
+            connected ? 'Connected' : 'Not Connected',
+            style: AppTextStyles.headline,
+          ),
+          SizedBox(height: AppSpacing.sm.h),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (connected) ...[
+                AppIcon(
+                  Assets.svg.shieldCheck,
+                  size: 15,
+                  color: color,
+                ).animate().scale(
+                  begin: Offset.zero,
+                  delay: 150.ms,
+                  duration: 500.ms,
+                  curve: Curves.elasticOut,
+                ),
+                SizedBox(width: 5.w),
+              ],
+              Text(
+                connected ? 'Your connection is secure' : 'Tap to connect',
+                style: AppTextStyles.bodySmall.copyWith(color: color),
+              ),
             ],
-            Text(
-              connected ? 'Your connection is secure' : 'Tap to connect',
-              style: AppTextStyles.bodySmall.copyWith(color: color),
-            ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 }

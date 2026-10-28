@@ -44,6 +44,18 @@ Decisions already made for this project. Follow them; change one only after aski
 - Figma Motion timelines are reproduced from `get_motion_context` keyframes. A keyframe's easing
   shapes the segment that *arrives* at it.
 
+## Animation
+
+- Use `flutter_animate` first; plain Flutter (`AnimatedSwitcher`, `TweenAnimationBuilder`,
+  `CustomPainter`) only where it can't express the effect.
+- **Entry animations play once per screen entry**: unkeyed `.animate()` at a stable tree position.
+  Never key an entry animation on UI state — that replays it on every state change.
+- State transitions: `.animate(target: state ? 1 : 0)` for reversible effects; one-shot effects
+  are widgets mounted only in the new state (they `.animate()` on mount); content swaps use
+  `SlideFadeSwitcher` (`lib/core/widgets/slide_fade_switcher.dart`).
+- Widget tests: flutter_animate starts on a deferred timer and its first ticker frame only records
+  the start, so pump `()`, then `16 ms`, then the duration.
+
 ## Verification workflow
 
 1. `dart format`, `flutter analyze`, `flutter test`.

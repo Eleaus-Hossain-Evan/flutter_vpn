@@ -20,6 +20,11 @@ void main() {
   testWidgets('Home matches both Figma frames', (tester) async {
     useFigmaFrame(tester);
     await tester.pumpWidget(designApp(home: const HomeScreen()));
+    // flutter_animate starts on a deferred timer and its first ticker frame
+    // only records the start time: kick off, take that first tick, then run
+    // the entry fades to completion.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 16));
     await tester.pump(const Duration(seconds: 1));
     expect(tester.takeException(), isNull);
 
@@ -57,7 +62,22 @@ void main() {
     expect(find.text('Disconnect'), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('home_power_button')));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    // Entry fades are one-shot: connecting must not replay them. 'Download'
+    // sits outside every state switcher, so its only FadeTransition is the
+    // metrics card's entry fade.
+    final entryFade = tester.widget<FadeTransition>(
+      find
+          .ancestor(
+            of: find.text('Download'),
+            matching: find.byType(FadeTransition),
+          )
+          .first,
+    );
+    expect(entryFade.opacity.value, 1);
+
+    await tester.pump(const Duration(milliseconds: 1200));
 
     // 7:1324 — connected.
     expectRect(
@@ -87,7 +107,7 @@ void main() {
     );
 
     await tester.tap(find.byKey(const ValueKey('home_disconnect_button')));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(milliseconds: 1200));
     expect(find.text('Not Connected'), findsOneWidget);
 
     // Flush animation and SVG-loading timers before teardown.
