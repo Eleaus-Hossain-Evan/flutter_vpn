@@ -37,6 +37,13 @@ class $AssetsSvgGen {
   SvgGenImage get backgroundRibbon =>
       const SvgGenImage('assets/svg/background_ribbon.svg');
 
+  /// File path: assets/svg/ban.svg
+  SvgGenImage get ban => const SvgGenImage('assets/svg/ban.svg');
+
+  /// File path: assets/svg/chevron_left.svg
+  SvgGenImage get chevronLeft =>
+      const SvgGenImage('assets/svg/chevron_left.svg');
+
   /// File path: assets/svg/chevron_right.svg
   SvgGenImage get chevronRight =>
       const SvgGenImage('assets/svg/chevron_right.svg');
@@ -44,17 +51,26 @@ class $AssetsSvgGen {
   /// File path: assets/svg/clock_3.svg
   SvgGenImage get clock3 => const SvgGenImage('assets/svg/clock_3.svg');
 
+  /// File path: assets/svg/columns_2.svg
+  SvgGenImage get columns2 => const SvgGenImage('assets/svg/columns_2.svg');
+
   /// File path: assets/svg/crown.svg
   SvgGenImage get crown => const SvgGenImage('assets/svg/crown.svg');
-
-  /// File path: assets/svg/flag_us.svg
-  SvgGenImage get flagUs => const SvgGenImage('assets/svg/flag_us.svg');
 
   /// File path: assets/svg/globe.svg
   SvgGenImage get globe => const SvgGenImage('assets/svg/globe.svg');
 
+  /// File path: assets/svg/headset.svg
+  SvgGenImage get headset => const SvgGenImage('assets/svg/headset.svg');
+
+  /// File path: assets/svg/history.svg
+  SvgGenImage get history => const SvgGenImage('assets/svg/history.svg');
+
   /// File path: assets/svg/house.svg
   SvgGenImage get house => const SvgGenImage('assets/svg/house.svg');
+
+  /// File path: assets/svg/info.svg
+  SvgGenImage get info => const SvgGenImage('assets/svg/info.svg');
 
   /// File path: assets/svg/lightning_bolt.svg
   SvgGenImage get lightningBolt =>
@@ -69,8 +85,17 @@ class $AssetsSvgGen {
   /// File path: assets/svg/power.svg
   SvgGenImage get power => const SvgGenImage('assets/svg/power.svg');
 
+  /// File path: assets/svg/refresh_cw.svg
+  SvgGenImage get refreshCw => const SvgGenImage('assets/svg/refresh_cw.svg');
+
   /// File path: assets/svg/settings.svg
   SvgGenImage get settings => const SvgGenImage('assets/svg/settings.svg');
+
+  /// File path: assets/svg/share_2.svg
+  SvgGenImage get share2 => const SvgGenImage('assets/svg/share_2.svg');
+
+  /// File path: assets/svg/shield.svg
+  SvgGenImage get shield => const SvgGenImage('assets/svg/shield.svg');
 
   /// File path: assets/svg/shield_check.svg
   SvgGenImage get shieldCheck =>
@@ -80,32 +105,66 @@ class $AssetsSvgGen {
   SvgGenImage get shieldSilhouette =>
       const SvgGenImage('assets/svg/shield_silhouette.svg');
 
+  /// File path: assets/svg/sliders_horizontal.svg
+  SvgGenImage get slidersHorizontal =>
+      const SvgGenImage('assets/svg/sliders_horizontal.svg');
+
+  /// File path: assets/svg/star.svg
+  SvgGenImage get star => const SvgGenImage('assets/svg/star.svg');
+
+  /// File path: assets/svg/star_filled.svg
+  SvgGenImage get starFilled => const SvgGenImage('assets/svg/star_filled.svg');
+
+  /// File path: assets/svg/star_rounded.svg
+  SvgGenImage get starRounded =>
+      const SvgGenImage('assets/svg/star_rounded.svg');
+
   /// File path: assets/svg/user_round.svg
   SvgGenImage get userRound => const SvgGenImage('assets/svg/user_round.svg');
 
   /// File path: assets/svg/world_map.svg
   SvgGenImage get worldMap => const SvgGenImage('assets/svg/world_map.svg');
 
+  /// File path: assets/svg/x.svg
+  SvgGenImage get x => const SvgGenImage('assets/svg/x.svg');
+
+  /// File path: assets/svg/zap.svg
+  SvgGenImage get zap => const SvgGenImage('assets/svg/zap.svg');
+
   /// List of all assets
   List<SvgGenImage> get values => [
     arrowDown,
     arrowUp,
     backgroundRibbon,
+    ban,
+    chevronLeft,
     chevronRight,
     clock3,
+    columns2,
     crown,
-    flagUs,
     globe,
+    headset,
+    history,
     house,
+    info,
     lightningBolt,
     menu,
     orbit,
     power,
+    refreshCw,
     settings,
+    share2,
+    shield,
     shieldCheck,
     shieldSilhouette,
+    slidersHorizontal,
+    star,
+    starFilled,
+    starRounded,
     userRound,
     worldMap,
+    x,
+    zap,
   ];
 }
 

@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../../core/router/app_shell.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/widgets/app_bottom_nav.dart';
 import '../../../../core/widgets/app_icon.dart';
 import '../../../../core/widgets/brand_logo.dart';
 import '../../../../core/widgets/slide_fade_switcher.dart';
 import '../../../../gen/assets.gen.dart';
+import '../../../servers/data/server_catalog.dart';
+import '../../../servers/presentation/screens/choose_server_screen.dart';
+import '../../../servers/providers/server_providers.dart';
+import '../../providers/connection_provider.dart';
 import '../widgets/connection_metrics_card.dart';
 import '../widgets/power_button.dart';
 import '../widgets/selected_server_card.dart';
@@ -18,15 +23,17 @@ import '../widgets/selected_server_card.dart';
 /// Figma "Home · Not connected" (7:1243) and "Home · Connected" (7:1324).
 ///
 /// Tapping the power button connects; "Disconnect" returns to the first
-/// state. Each state change replays the Figma entrance fades.
-class HomeScreen extends HookWidget {
+/// state. The entrance fades play once, when Home is first shown.
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   static const route = '/home';
 
   @override
-  Widget build(BuildContext context) {
-    final connected = useState(false);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final connected = ref.watch(connectedProvider);
+    final server =
+        serverById(ref.watch(selectedServerProvider)) ?? servers.first;
 
     return DecoratedBox(
       decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
@@ -44,15 +51,18 @@ class HomeScreen extends HookWidget {
                   AppSpacing.lg.h,
                 ),
                 child: _Dashboard(
-                  connected: connected.value,
-                  onConnect: () => connected.value = true,
-                  onDisconnect: () => connected.value = false,
+                  connected: connected,
+                  server: server,
+                  onConnect: () =>
+                      ref.read(connectedProvider.notifier).set(true),
+                  onDisconnect: () =>
+                      ref.read(connectedProvider.notifier).set(false),
+                  onOpenServers: () => context.push(ChooseServerScreen.route),
                 ),
               ),
             ),
           ],
         ),
-        bottomNavigationBar: AppBottomNav(currentIndex: 0, onTap: (_) {}),
       ),
     );
   }
@@ -71,7 +81,7 @@ class _AppHeader extends StatelessWidget {
         children: [
           GestureDetector(
             key: const ValueKey('home_menu_button'),
-            onTap: () {},
+            onTap: () => AppShell.openDrawer(context),
             child: AppIcon(
               Assets.svg.menu,
               size: 23,
@@ -108,13 +118,17 @@ class _AppHeader extends StatelessWidget {
 class _Dashboard extends StatelessWidget {
   const _Dashboard({
     required this.connected,
+    required this.server,
     required this.onConnect,
     required this.onDisconnect,
+    required this.onOpenServers,
   });
 
   final bool connected;
+  final Server server;
   final VoidCallback onConnect;
   final VoidCallback onDisconnect;
+  final VoidCallback onOpenServers;
 
   /// Figma entrance fade: hold, then 450 ms ease-out to opaque.
   ///
@@ -163,7 +177,16 @@ class _Dashboard extends StatelessWidget {
           ),
         ),
         gap,
-        _fadeIn(SelectedServerCard(connected: connected), 220),
+        _fadeIn(
+          SelectedServerCard(
+            key: const ValueKey('home_server_card'),
+            connected: connected,
+            isoCode: server.iso,
+            city: server.city,
+            onTap: onOpenServers,
+          ),
+          220,
+        ),
         gap,
         _fadeIn(ConnectionMetricsCard(connected: connected), 340),
         gap,

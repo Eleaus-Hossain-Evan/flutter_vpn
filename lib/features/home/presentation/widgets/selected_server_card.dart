@@ -6,15 +6,25 @@ import '../../../../gen/assets.gen.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/utils/country_name.dart';
 import '../../../../core/widgets/app_icon.dart';
+import '../../../../core/widgets/country_flag.dart';
 import '../../../../core/widgets/slide_fade_switcher.dart';
 
 /// Figma "Selected server": Smart Location (globe) when not connected,
 /// the connected country (flag) otherwise.
 class SelectedServerCard extends StatelessWidget {
-  const SelectedServerCard({super.key, required this.connected, this.onTap});
+  const SelectedServerCard({
+    super.key,
+    required this.connected,
+    required this.isoCode,
+    required this.city,
+    this.onTap,
+  });
 
   final bool connected;
+  final String isoCode;
+  final String city;
   final VoidCallback? onTap;
 
   @override
@@ -47,10 +57,10 @@ class SelectedServerCard extends StatelessWidget {
                   ),
                 ),
                 child: connected
-                    ? Assets.svg.flagUs.svg(
+                    ? CountryFlag(
+                        isoCode,
                         key: const ValueKey('flag'),
-                        width: 36.r,
-                        height: 36.r,
+                        size: 36,
                       )
                     : Align(
                         key: const ValueKey('globe'),
@@ -73,12 +83,14 @@ class SelectedServerCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      connected ? 'United States' : 'Smart Location',
+                      connected
+                          ? countryName(context, isoCode)
+                          : 'Smart Location',
                       style: AppTextStyles.title,
                     ),
                     SizedBox(height: 5.h),
                     Text(
-                      connected ? 'New York' : 'Fastest Server',
+                      connected ? city : 'Fastest Server',
                       style: AppTextStyles.bodySmall.copyWith(
                         color: AppColors.textSecondary,
                       ),

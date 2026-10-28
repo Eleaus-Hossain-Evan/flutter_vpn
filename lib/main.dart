@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:marionette_flutter/marionette_flutter.dart';
@@ -76,6 +77,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
         routerConfig: appRouter,
+        localizationsDelegates: const [CountryLocalizations.delegate],
         builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.dark.copyWith(
             statusBarColor: Colors.transparent,

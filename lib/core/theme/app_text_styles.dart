@@ -57,6 +57,9 @@ abstract final class AppTextStyles {
   /// 13 / Bold — server row country.
   static TextStyle get label => _style(13, FontWeight.w700);
 
+  /// 13 / SemiBold — city in the "Other servers" list.
+  static TextStyle get labelSemiBold => _style(13, FontWeight.w600);
+
   /// 13 / Medium — tagline.
   static TextStyle get bodyMedium => _style(13, FontWeight.w500);
 

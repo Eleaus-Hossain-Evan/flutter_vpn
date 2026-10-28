@@ -8,18 +8,20 @@ Figma file: **VPN App** (opened through the Figwright MCP plugin). All frames ar
 | # | Screen | Figma node | Status |
 |---|---|---|---|
 | 1 | Splash screen | `7:1219` | Done — verified on emulator, baseline `.figwright/snapshots/7-1219.json` |
-| 2 | Home · Not connected | `7:1243` | Built — tests pass; visual check pending (needs app restart) |
-| 3 | Home · Connected | `7:1324` | Built — same screen as #2; visual check pending |
-| 4 | Choose server | `7:1427` | Planned |
-| 5 | Server details | `7:1631` | Planned |
-| 6 | Features | `7:1817` | Planned |
-| 7 | Profile and settings | `7:1901` | Planned |
-| 8 | Navigation drawer | `7:1969` | Planned |
+| 2 | Home · Not connected | `7:1243` | Done — confirmed by user |
+| 3 | Home · Connected | `7:1324` | Done — same screen as #2, confirmed by user |
+| 4 | Choose server | `7:1427` | Built — tests pass; visual check pending (needs app restart) |
+| 5 | Server details | `7:1631` | Built — tests pass; visual check pending |
+| 6 | Features | `7:1817` | Built — tests pass; visual check pending |
+| 7 | Profile and settings | `7:1901` | Built — tests pass; visual check pending |
+| 8 | Navigation drawer | `7:1969` | Built — tests pass; visual check pending |
 
 ## Next step
 
-Visual check of Home (both states) on the emulator against Figma, then build Choose server
-(`7:1427`). Home's menu (→ drawer), server card (→ Choose server) and nav tabs are not wired yet.
+All 8 screens are built. Next: restart the app (new router shell, new assets) and visually check
+screens 4–8 against Figma, one screenshot each, then `design_diff` baselines. Not wired (no Figma
+screens): drawer items Connection History / Settings / Share App / Help & Support / About, Profile
+rows, Log Out, Upgrade cards, Split Tunneling / Protocol chevrons.
 
 ## Open items
 
@@ -28,6 +30,19 @@ Visual check of Home (both states) on the emulator against Figma, then build Cho
 - Splash timeline plays once; Figma does not record whether it loops.
 - Home connect/disconnect motion (ring ignite + bloom, sparks, glyph flicker, soft ripple, metric
   count-up, card/text swaps) is user-requested design, not in Figma (no prototype reactions).
+- Choose server: Streaming / Gaming tabs list every server (no category data in Figma); list is
+  Figma's 10 servers as static data; refresh only spins the icon (no backend). Its motion (entry
+  stagger, signal-bar grow, tab pill, star pop, refresh spin) is improvised; Figma has none.
+- Server details: download / upload values are Figma's static numbers for every server (no speed
+  test); ping is the server's latency. Quality chip shows Figma's "Optimal" for 3-bar servers and an
+  improvised amber "Fair" for weaker ones. "Other servers" lists the same country's servers (only
+  the US has any). Connect selects the server, connects and goes to Home.
+- Features switches and Profile have local / no state (no backend). Drawer highlights Home or
+  Features (the current tab); Profile has no drawer entry in Figma.
+- Motion on Server details, Features, Profile and the drawer is improvised (Figma has none):
+  one-shot staggered fade + rise entries, flag pop, star pop, switch slide, drawer items slide in on
+  each opening.
+- Flags now come from circle_flags, whose designs differ slightly from Figma's simplified flags.
 - Scale pivots for the splash shield and ripples are assumed to be the centre.
 - `lib/main.dart`: `sharedPreferences` in `_bootstrap` is unused (pre-existing analyzer warning).
 
@@ -38,3 +53,10 @@ Visual check of Home (both states) on the emulator against Figma, then build Cho
 - 2026-10-29 — Home built (both states, Figma motion: halo pulse + one-shot entry fades). Added
   flutter_gen (`package_parameter_enabled: false`), `AppIcon`, `BrandLogo`, `AppBottomNav`,
   `SlideFadeSwitcher`; splash → Home navigation; connect/disconnect transition effects.
+- 2026-10-29 — Choose server built: country_code_picker + circle_flags (`CountryFlag`,
+  `countryName`), shared `PageHeader`, `SignalBars`, `ServerRow`; Home server card and Servers tab
+  open it; Home's connected flag switched to `CountryFlag`.
+- 2026-10-29 — Server details, Features, Profile and Navigation drawer built. Router moved to a
+  `StatefulShellRoute` (`AppShell`: bottom nav + drawer); connection, selected server and
+  favourites moved to Riverpod notifiers; shared `MenuTile`; 11 icons exported; token
+  `labelSemiBold` (13/600) added; server data moved to `server_catalog.dart`.

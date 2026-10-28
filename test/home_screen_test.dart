@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_vpn/core/router/app_router.dart';
 import 'package:flutter_vpn/features/home/presentation/screens/home_screen.dart';
 
 import 'helpers/design_harness.dart';
-
-void expectRect(WidgetTester tester, Finder finder, Rect figma) {
-  final rect = tester.getRect(finder);
-  // ignore: avoid_print
-  print('$finder → $rect  (figma $figma)');
-  expect(rect.left, closeTo(figma.left, 1.5), reason: '$finder left');
-  expect(rect.top, closeTo(figma.top, 1.5), reason: '$finder top');
-  expect(rect.width, closeTo(figma.width, 1.5), reason: '$finder width');
-  expect(rect.height, closeTo(figma.height, 1.5), reason: '$finder height');
-}
 
 void main() {
   setUpAll(loadInter);
 
   testWidgets('Home matches both Figma frames', (tester) async {
     useFigmaFrame(tester);
-    await tester.pumpWidget(designApp(home: const HomeScreen()));
+    // Through the router: the bottom nav belongs to the app shell.
+    await tester.pumpWidget(
+      designApp(router: createAppRouter(initialLocation: HomeScreen.route)),
+    );
     // flutter_animate starts on a deferred timer and its first ticker frame
     // only records the start time: kick off, take that first tick, then run
     // the entry fades to completion.
