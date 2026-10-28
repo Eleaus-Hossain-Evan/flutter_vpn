@@ -24,6 +24,12 @@ Decisions already made for this project. Follow them; change one only after aski
 
 - `flutter_svg` for every Figma vector. SVGs live in `assets/svg/`, named after the Figma layer in
   snake_case. Strip SVG filters (flutter_svg ignores them) and recreate effects in Flutter.
+- Asset paths come **only** from flutter_gen (`lib/gen/assets.gen.dart`): `Assets.svg.x.svg(...)`.
+  Never hand-write asset path strings or a constants class. After adding an asset run
+  `dart run build_runner build --delete-conflicting-outputs`.
+- Line icons render with `AppIcon(Assets.svg.x, size: …)` (`lib/core/widgets/app_icon.dart`). Figma
+  keeps icon strokes at 1.9 px at every size; `AppIcon` rewrites `stroke-width` so one SVG per icon
+  stays exact at any size (`strokeWidth:` overrides, e.g. 4 for the 57 px power glyph).
 - Inter is **bundled** (static TTFs, v3.19 — the version Figma uses) in `assets/fonts/`, weights
   400/500/600/700/800. No `google_fonts`.
 - Sizing: `flutter_screenutil`, design size 390 × 844 (`.w` / `.h` / `.sp` / `.r`).

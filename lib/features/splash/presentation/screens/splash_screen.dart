@@ -1,14 +1,15 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../gen/assets.gen.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../home/presentation/screens/home_screen.dart';
 
 /// Figma: "Splash screen" (7:1219).
 ///
@@ -25,25 +26,20 @@ class SplashScreen extends HookWidget {
   Widget build(BuildContext context) {
     final controller = useAnimationController(duration: _timeline);
     useEffect(() {
-      controller.forward();
+      controller.forward().then((_) {
+        if (context.mounted) context.go(HomeScreen.route);
+      });
       return null;
     }, const []);
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
-      child: Scaffold(
-        body: DecoratedBox(
-          decoration: const BoxDecoration(
-            gradient: AppColors.backgroundGradient,
-          ),
-          child: SizedBox.expand(
-            child: AnimatedBuilder(
-              animation: controller,
-              builder: (context, _) =>
-                  _SplashContent(seconds: controller.value * 4),
-            ),
+    return Scaffold(
+      body: DecoratedBox(
+        decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
+        child: SizedBox.expand(
+          child: AnimatedBuilder(
+            animation: controller,
+            builder: (context, _) =>
+                _SplashContent(seconds: controller.value * 4),
           ),
         ),
       ),
@@ -83,10 +79,7 @@ class _SplashContent extends StatelessWidget {
             clipper: _CenterRevealClipper(_Motion.ribbonReveal.at(t) / 390),
             child: Opacity(
               opacity: _Motion.ribbonOpacity.at(t),
-              child: SvgPicture.asset(
-                'assets/svg/background_ribbon.svg',
-                fit: BoxFit.fill,
-              ),
+              child: Assets.svg.backgroundRibbon.svg(fit: BoxFit.fill),
             ),
           ),
         ),
@@ -167,7 +160,7 @@ class _Shield extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = seconds;
     final glow = _Motion.boltGlow.at(t);
-    const bolt = 'assets/svg/lightning_bolt.svg';
+    final bolt = Assets.svg.lightningBolt;
 
     return SizedBox(
       width: _SplashContent._shieldWidth.r,
@@ -175,10 +168,7 @@ class _Shield extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(
-            child: SvgPicture.asset(
-              'assets/svg/shield_silhouette.svg',
-              fit: BoxFit.fill,
-            ),
+            child: Assets.svg.shieldSilhouette.svg(fit: BoxFit.fill),
           ),
           Positioned(
             left: 30.38.r,
@@ -204,8 +194,7 @@ class _Shield extends StatelessWidget {
                               sigmaX: glow.r / 2,
                               sigmaY: glow.r / 2,
                             ),
-                            child: SvgPicture.asset(
-                              bolt,
+                            child: bolt.svg(
                               colorFilter: const ColorFilter.mode(
                                 AppColors.boltGlow,
                                 BlendMode.srcIn,
@@ -213,7 +202,7 @@ class _Shield extends StatelessWidget {
                             ),
                           ),
                         ),
-                      Positioned.fill(child: SvgPicture.asset(bolt)),
+                      Positioned.fill(child: bolt.svg()),
                     ],
                   ),
                 ),

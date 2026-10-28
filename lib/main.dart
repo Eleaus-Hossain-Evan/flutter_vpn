@@ -76,6 +76,12 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
         routerConfig: appRouter,
+        builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.transparent,
+          ),
+          child: child!,
+        ),
       ),
     );
   }
